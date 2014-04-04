@@ -9,9 +9,8 @@ package textadventure;
 import java.util.ArrayList;
 
 public class CharacterInfo {
-String name;
-int weapon;
-int profession;
-ArrayList<String>Equiptment;
-        
+String name,weapon,profession;
+int spells;
+int STRENGTH,DEXTERITY,MAGIC,STEALTH,INFLUENCE,FOOD;
+ArrayList<String> Equiptment;
 }
