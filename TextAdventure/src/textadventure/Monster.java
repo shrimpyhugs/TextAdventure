@@ -141,7 +141,4 @@ public class Monster {
             break;
     }
     }
-
-
-
 }

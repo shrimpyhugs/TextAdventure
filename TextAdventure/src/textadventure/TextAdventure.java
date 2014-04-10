@@ -7,12 +7,13 @@ package textadventure;
 import java.util.Scanner;
 
 public class TextAdventure {
-    
+    static TextAdventure TextAdv;
     public static void main(String[] args) {
+  
         Scanner input = new Scanner(System.in); //your everyday run of the mill Scanner
         CharacterInfo Character = new CharacterInfo(); //Create Character
         AdventureModule Adventure = new AdventureModule(); //load adventure module
-      
+        TextAdv = new TextAdventure();
         //**************************choices****************************//
         String[] Weapon = new String[5];{
             Weapon[0] = "Frying Pan";
@@ -94,31 +95,52 @@ public class TextAdventure {
     System.out.println(">> Begin your journey? (y)");
     while(!"y".equals(input.next())){}
     Adventure.Load();
-    //************************************COMBAT ENCOUNTER*****************************************//
-    System.out.println(">> " + Adventure.Enc[0].Description);//details information about encounter
-    
-    String response = "";//sets response string for input and initialises it
-    int end = 0;//integer to see if encounter ends (1)
-    while(!"attack".equals(response) && end == 0){//run through until "attack" is called or encounter ends (1) otherwise
+    TextAdv.Event(Adventure, Character, 0);
+
+    }
+  }
+        
+  public void Event(AdventureModule Adventure, CharacterInfo Character, int CurrentEvent){
+      Scanner input = new Scanner(System.in);//Standard run of the mill scanner
+      int NextEvent = CurrentEvent;
+      int end = 0;//integer to see if encounter ends (1)
+    System.out.println(">> " + Adventure.Eve[CurrentEvent].Description);//details information about encounter
+    while(end == 0){    
+    String response = input.nextLine();
+    //examine
+    if(response.equalsIgnoreCase("examine")){
+    System.out.println(Adventure.Eve[CurrentEvent].examine);
+    }
+    //relocators
+   
+        
+    for(int i = 0; i < (Adventure.Eve[CurrentEvent].RelQuantity - 1); i++){  
+        if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].CommandRel[i])){
+                NextEvent = Adventure.Eve[CurrentEvent].LocRel[i];
+                end = 1;
+                }
+    }
+   
+    //Queries
+            for(int i = 0; i < Adventure.Eve[CurrentEvent].QueQuantity - 1; i++)
+                if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].CommandQue[i]))
+                System.out.println(Adventure.Eve[CurrentEvent].InfoQue[i]);
+                   
+    //if monster encounter
+    if(Adventure.Eve[CurrentEvent].quantity < 0){ //if there are monsters, dislay monster types
+    response = "";//sets response string for input and initialises it
+    while(!"attack".equals(response)){//run through until "attack" is called or encounter ends (1) otherwise
     response = input.next();
     switch(response){
-        case "examine":
-            for(int i = 0; i < Adventure.Enc[0].quantity; i++){//loops through every monster
-                int q = Adventure.Enc[0].Mob[i].MobType;
-                System.out.print(">> Type: " + Adventure.Enc[0].Mob[i].MobSelection.get(q));
-                System.out.println(", Name: " + Adventure.Enc[0].Mob[i].MobName);           
-            }
-            response = ""; //clear response for next input
-        break;
         case "flee": 
             int i = (int)(Math.random() * 10 + 1);
             System.out.println(">> You rolled a " + i);
-            if((i - Adventure.Enc[0].quantity + (Character.DEXTERITY - 10) >= 7)){
-                System.out.println(">> You Flee from the enemy!");//success
+           if((i - Adventure.Eve[CurrentEvent].quantity + (Character.DEXTERITY - 10) >= 7)){
+               System.out.println(">> You Flee from the enemy!");//success
                 end = 1; //states combant has ended
                 
             }
-            else{
+           else{
                 System.out.println(">> the enemy catch up to you, -2 HEALTH and you must stand and fight!");
                 Character.HEALTH = Character.HEALTH - 2;//loose 2 HEALTH from fail.
                 response = "Attack";//cause Attack Case
@@ -130,11 +152,21 @@ public class TextAdventure {
         break;
     }
     }
-    
-    //*****************************************************************************************//
     }
+  
+    TextAdv.Event(Adventure, Character, NextEvent);
+    
   }
+  }
+            
+   
 }
+    
+    
+  
+  
+  
+
 
 
 
