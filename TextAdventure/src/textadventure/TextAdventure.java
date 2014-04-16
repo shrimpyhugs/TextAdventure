@@ -15,13 +15,13 @@ public class TextAdventure {
         AdventureModule Adventure = new AdventureModule(); //load adventure module
         TextAdv = new TextAdventure();
         //**************************choices****************************//
-        String[] Weapon = new String[5];{
-            Weapon[0] = "Frying Pan";
-            Weapon[1] = "Flail";
-            Weapon[2] = "Cutlass";
-            Weapon[3] = "Fists";
-            Weapon[4] = "Shotgun";
-        }
+        //String[] Weapon = new String[5];{
+        //    Weapon[0] = "Frying Pan";
+        //    Weapon[1] = "Flail";
+        //    Weapon[2] = "Cutlass";
+        //    Weapon[3] = "Fists";
+        //    Weapon[4] = "Shotgun";
+        //}
         
         String[] Profession = new String[5];{
             Profession[0] = "Sorceror";
@@ -36,7 +36,7 @@ public class TextAdventure {
     System.out.println(">> Hello Adventurer, What is your Name?");
     Character.name = input.nextLine(); //sets player name
     System.out.println(">> Welcome " + Character.name + " , choose a class:");
-    System.out.println(">> a)Sorceror b) Rogue c) Bard d) Warrior e) Chef");
+    System.out.println(">> (a)Sorceror (b) Rogue (c) Bard (d) Warrior (e) Chef");
     int select = 0;
     while(select == 0){ //while option hasnt been selected
         switch(input.next()) { //test to see which option was selected
@@ -94,7 +94,7 @@ public class TextAdventure {
     System.out.println();
     System.out.println(">> Begin your journey? (y)");
     while(!"y".equals(input.next())){}
-    Adventure.Load();
+    Adventure.Load(Character);
     TextAdv.Event(Adventure, Character, 0);
 
     }
@@ -109,23 +109,88 @@ public class TextAdventure {
     String response = input.nextLine();
     //examine
     if(response.equalsIgnoreCase("examine")){
-    System.out.println(Adventure.Eve[CurrentEvent].examine);
+    System.out.println(">> " + Adventure.Eve[CurrentEvent].examine);
     }
-    //relocators
-   
-        
-    for(int i = 0; i < (Adventure.Eve[CurrentEvent].RelQuantity - 1); i++){  
+    
+    //Tests
+    for(int i = 0; i < Adventure.Eve[CurrentEvent].TestQuantity; i++){
+        if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].TestCommand[i])){
+        switch(Adventure.Eve[CurrentEvent].TestAttribute[i]){
+            case "STRENGTH": 
+                if(((int)(Math.random() * 10 + 1) + (Character.STRENGTH - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
+                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
+                }
+                else{
+                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
+                }
+                end = 1;
+                break;
+            case "DEXTERITY":
+                if(((int)(Math.random() * 10 + 1) + (Character.DEXTERITY - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
+                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
+                }
+                else{
+                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
+                }
+                end = 1;
+                break;
+            case "MAGIC":
+                if(((int)(Math.random() * 10 + 1) + (Character.MAGIC - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
+                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
+                }
+                else{
+                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
+                }
+                end = 1;
+                break;
+            case "STEALTH":
+                if(((int)(Math.random() * 10 + 1) + (Character.STEALTH - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
+                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
+                }
+                else{
+                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
+                }
+                end = 1;
+                break;
+            case "INFLUENCE":
+                if(((int)(Math.random() * 10 + 1) + (Character.INFLUENCE - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
+                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
+                }
+                else{
+                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
+                }
+                end = 1;
+                break;
+        }
+    }
+    }   
+    
+    
+    //relocators    
+    for(int i = 0; i < (Adventure.Eve[CurrentEvent].RelQuantity); i++){  
         if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].CommandRel[i])){
+                if(Adventure.Eve[CurrentEvent].LocRel[i] != -1){
                 NextEvent = Adventure.Eve[CurrentEvent].LocRel[i];
                 end = 1;
+                }
                 }
     }
    
     //Queries
-            for(int i = 0; i < Adventure.Eve[CurrentEvent].QueQuantity - 1; i++)
+            for(int i = 0; i < Adventure.Eve[CurrentEvent].QueQuantity; i++){
                 if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].CommandQue[i]))
-                System.out.println(Adventure.Eve[CurrentEvent].InfoQue[i]);
-                   
+                System.out.println(">> " + Adventure.Eve[CurrentEvent].InfoQue[i]);
+            }
     //if monster encounter
     if(Adventure.Eve[CurrentEvent].quantity < 0){ //if there are monsters, dislay monster types
     response = "";//sets response string for input and initialises it
@@ -153,10 +218,10 @@ public class TextAdventure {
     }
     }
     }
-  
-    TextAdv.Event(Adventure, Character, NextEvent);
     
   }
+    TextAdv.Event(Adventure, Character, NextEvent);
+    
   }
             
    
