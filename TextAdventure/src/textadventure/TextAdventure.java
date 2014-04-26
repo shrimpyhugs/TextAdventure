@@ -110,63 +110,93 @@ public class TextAdventure {
     //examine
     if(response.equalsIgnoreCase("examine")){
     System.out.println(">> " + Adventure.Eve[CurrentEvent].examine);
+    if(Adventure.Eve[CurrentEvent].quantity > 0){
+    for(int i = 0; i < Adventure.Eve[CurrentEvent].quantity; i++)
+        System.out.println(">> Monster Name: " + Adventure.Eve[CurrentEvent].Mob[i].MobName + " | Mob Type: " + Adventure.Eve[CurrentEvent].Mob[i].MobType);
     }
+    }
+    //Add Item
+    for(int i = 0; i < Adventure.Eve[CurrentEvent].ItemCollectQty; i++){
+        if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].ItemCollectCommand[i])){
+            for(int j = 0; j < Character.Equiptment.size(); j++){
+                if(Adventure.Eve[CurrentEvent].ItemCollectName[i].equals(Character.Equiptment.get(j))){
+                    int Qty = Character.EquiptmentQty.get(j);
+                    Character.EquiptmentQty.set(j,Qty + Adventure.Eve[CurrentEvent].ItemCollectQuantity[i]);              
+                }
+                else{
+                Character.Equiptment.add(Adventure.Eve[CurrentEvent].ItemCollectName[i]);
+                Character.EquiptmentQty.add(Adventure.Eve[CurrentEvent].ItemCollectQuantity[i]);
+                }          
+            }
+        }
+    }
+    //Remove Item
+    for(int i = 0; i < Adventure.Eve[CurrentEvent].ItemRemoveQty; i++){
+        if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].ItemRemoveCommand[i])){
+            for(int j = 0; j < Character.Equiptment.size(); j++){
+                if(Adventure.Eve[CurrentEvent].ItemCollectName[i].equals(Character.Equiptment.get(j))){
+                    //Delete equiptment
+                }          
+            }
+        }
+    }
+    //Item Tests
     
-    //Tests
+    //Ability Tests
     for(int i = 0; i < Adventure.Eve[CurrentEvent].TestQuantity; i++){
         if(response.equalsIgnoreCase(Adventure.Eve[CurrentEvent].TestCommand[i])){
         switch(Adventure.Eve[CurrentEvent].TestAttribute[i]){
             case "STRENGTH": 
                 if(((int)(Math.random() * 10 + 1) + (Character.STRENGTH - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
-                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
                 }
                 else{
-                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
                 }
                 end = 1;
                 break;
             case "DEXTERITY":
                 if(((int)(Math.random() * 10 + 1) + (Character.DEXTERITY - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
-                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
                 }
                 else{
-                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
                 }
                 end = 1;
                 break;
             case "MAGIC":
                 if(((int)(Math.random() * 10 + 1) + (Character.MAGIC - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
-                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
                 }
                 else{
-                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
                 }
                 end = 1;
                 break;
             case "STEALTH":
                 if(((int)(Math.random() * 10 + 1) + (Character.STEALTH - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
-                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
                 }
                 else{
-                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
                 }
                 end = 1;
                 break;
             case "INFLUENCE":
                 if(((int)(Math.random() * 10 + 1) + (Character.INFLUENCE - 10)) > Adventure.Eve[CurrentEvent].TestPassScore[i]){
-                    System.out.println(Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestSuccessMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestSuccessLoc[i];
                 }
                 else{
-                    System.out.println(Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
+                    System.out.println(">> " + Adventure.Eve[CurrentEvent].TestFailureMsg[i]);
                     NextEvent = Adventure.Eve[CurrentEvent].TestFailureLoc[i];
                 }
                 end = 1;
@@ -197,22 +227,41 @@ public class TextAdventure {
     while(!"attack".equals(response)){//run through until "attack" is called or encounter ends (1) otherwise
     response = input.next();
     switch(response){
+        
         case "flee": 
+            if(Adventure.Eve[CurrentEvent].CanFlee){
             int i = (int)(Math.random() * 10 + 1);
             System.out.println(">> You rolled a " + i);
            if((i - Adventure.Eve[CurrentEvent].quantity + (Character.DEXTERITY - 10) >= 7)){
                System.out.println(">> You Flee from the enemy!");//success
                 end = 1; //states combant has ended
                 
+                }
+                else{
+                    System.out.println(">> the enemy catch up to you, -2 HEALTH and you must stand and fight!");
+                    Character.HEALTH = Character.HEALTH - 2;//loose 2 HEALTH from fail.
+                    response = "Attack";//cause Attack Case
+                }
             }
-           else{
-                System.out.println(">> the enemy catch up to you, -2 HEALTH and you must stand and fight!");
-                Character.HEALTH = Character.HEALTH - 2;//loose 2 HEALTH from fail.
-                response = "Attack";//cause Attack Case
-            }     
-        break;
-            case "attack":System.out.println(">> Commence Combat");
+            else
+                System.out.println(">> you cannot flee from this encounter");
+            break;        
+        case "attack":System.out.println(">> Commence Combat");
             //combat goes here
+            int Mobsleft = Adventure.Eve[CurrentEvent].quantity;
+            boolean CharInitiative;
+            
+            //Calculating Initiative
+            int MobInt = (int)(Math.random() * 10 + 1 + Adventure.Eve[CurrentEvent].quantity);
+            int CharInt = (int)(Math.random() * 10 + 1 + (Character.DEXTERITY - 10));
+            if(CharInt > MobInt)
+                CharInitiative = true;
+            else
+                CharInitiative = false;
+            //
+            while(Character.HEALTH > 0 || Mobsleft > 0){
+            
+            }
             end = 1;
         break;
     }
